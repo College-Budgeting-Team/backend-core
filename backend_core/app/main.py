@@ -76,4 +76,20 @@ def save_result(saldo: float, pengeluaran: float, sisa: str, zona: str, db: Sess
     )
     db.add(new_record)
     db.commit()
-    return {"status": "success", "message": "Data tersimpan di SQLite"}
+    return {"status": "success", "message": "Data tersimpan!"}
+
+@app.get("/riwayat")
+def ambil_riwayat(db: Session = Depends(get_db)):
+    records = db.query(models.SurvivalRecord).order_by(models.SurvivalRecord.id.desc()).all()
+    return records
+
+@app.delete("/hapus-riwayat/{id}")
+def hapus_riwayat(id: int, db: Session = Depends(get_db)):
+    record = db.query(models.SurvivalRecord).filter(models.SurvivalRecord.id == id).first()
+    
+    if not record:
+        return {"error": "Data tidak ditemukan!"}
+    
+    db.delete(record)
+    db.commit()
+    return {"status": "success", "message": f"{id} berhasil dihapus"}
