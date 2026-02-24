@@ -1,10 +1,21 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+from .db import models, database
 import sys
 import os
 
+models.Base.metadata.create_all(bind=database.engine)
+
 # Setup Path biar C++ kebaca
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+def get_db():
+    db = database.SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 try:
     import survival_lib
@@ -23,7 +34,7 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"status": "Active", "engine": "C++ Ready" if survival_lib else "Missing"}
+    return {"status": "Active", "engine": " Ready" if survival_lib else "Missing"}
 
 @app.get("/cek-survival")
 def cek_survival(saldo: float, pengeluaran: float):
@@ -54,3 +65,15 @@ def cek_survival(saldo: float, pengeluaran: float):
         "pesan": pesan,
         "zona": zona 
     }
+    
+@app.post("/simpan-hasil")
+def save_result(saldo: float, pengeluaran: float, sisa: str, zona: str, db: Session = Depends(get_db)):
+    new_record = models.SurvivalRecord(
+        saldo=saldo,
+        pengeluaran_harian=pengeluaran,
+        sisa_hari=sisa,
+        zona=zona
+    )
+    db.add(new_record)
+    db.commit()
+    return {"status": "success", "message": "Data tersimpan di SQLite"}
