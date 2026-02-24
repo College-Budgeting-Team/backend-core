@@ -1,0 +1,49 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# --- C++ & CMake (Build Artifacts) ---
+# Folder build tempat sampah cmake
+build/
+cpp_engine/build/
+
+# File konfigurasi CMake yang digenerate otomatis
+CMakeCache.txt
+CMakeFiles/
+*.cmake
+Makefile
+
+# --- Visual Studio & VS Code ---
+.vscode/
+.idea/
+*.sln
+*.vcxproj
+*.vcxproj.user
+*.pdb
+*.idb
+*.tlog
+
+# --- Compiled Binary (Hasil Compile) ---
+# Kita ignore ini biar repo tetap bersih. 
+# Orang lain harus compile sendiri pakai CMake biar cocok sama laptop mereka.
+*.so
+*.pyd
+*.dll
+*.exe
+*.o
+*.obj
+
+# --- OS Files ---
+.DS_Store
+Thumbs.db
+
+/cpp_engine/doc/
+doc/
+/cpp_engine/build/
+
+**/man/
+**/doc/
+**/share/
